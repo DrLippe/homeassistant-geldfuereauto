@@ -6,7 +6,7 @@ import re
 from datetime import timedelta
 from html.parser import HTMLParser
 
-from aiohttp import ClientError
+from aiohttp import ClientError, ClientResponseError
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -152,6 +152,15 @@ class GeldFuerEautoAccountCoordinator(DataUpdateCoordinator[dict]):
             # Do not retry a rejected login. The API client already retries once
             # when an existing session expires.
             raise UpdateFailed(f"Customer authentication failed: {err}") from err
+        except ClientResponseError as err:
+            # Only report a known static API path and HTTP status; never expose
+            # account data, session cookies, query strings, or response bodies.
+            from urllib.parse import urlsplit
+
+            path = urlsplit(str(err.request_info.real_url)).path
+            raise UpdateFailed(
+                f"Customer API HTTP {err.status} at {path}"
+            ) from err
         except (ClientError, TimeoutError, ValueError) as err:
             raise UpdateFailed(
                 f"Customer API request failed: {type(err).__name__}"
