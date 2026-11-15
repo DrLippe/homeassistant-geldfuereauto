@@ -129,3 +129,28 @@ class GeldFuerEautoCoordinator(DataUpdateCoordinator[dict]):
             return parse_prices(html)
         except (ClientError, TimeoutError, ValueError) as err:
             raise UpdateFailed(f"Unable to retrieve public premiums: {err}") from err
+
+
+class GeldFuerEautoAccountCoordinator(DataUpdateCoordinator[dict]):
+    """Poll the customer's vehicles and payout summary."""
+
+    def __init__(self, hass: HomeAssistant, entry) -> None:
+        from .api import GeldFuerEautoApi
+        super().__init__(
+            hass,
+            logger=__import__("logging").getLogger(__name__),
+            name=f"{DOMAIN}_account",
+            update_interval=timedelta(hours=6),
+        )
+        self.api = GeldFuerEautoApi(hass, entry.data["email"], entry.data["password"])
+
+    async def _async_update_data(self) -> dict:
+        from .api import GeldFuerEautoAuthError
+        try:
+            try:
+                return await self.api.fetch()
+            except GeldFuerEautoAuthError:
+                await self.api.login()
+                return await self.api.fetch()
+        except (ClientError, TimeoutError, ValueError, GeldFuerEautoAuthError) as err:
+            raise UpdateFailed(f"Customer API unavailable: {type(err).__name__}") from err
