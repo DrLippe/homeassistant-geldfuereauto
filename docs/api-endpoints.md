@@ -22,7 +22,8 @@ information, or access tokens.
 | /api/chargers/locations | GET | rows, count | No |
 | /api/chargers/operators | GET | rows, count | No |
 
-The HAR omitted login response Set-Cookie and authenticated request Cookie
-headers. Whether the login session is reproducible in Home Assistant is not
-yet confirmed. The personal-account mode must be tested with real credentials
-locally before it can be described as working.
+Postman validation confirmed the JSON login body is accepted and the server sets
+\`sid\` (session token) and \`sid_active\` (session state) cookies. The integration
+now uses a private aiohttp CookieJar, logs in before the first read, and
+re-authenticates after HTTP 401/403. Cookie contents are never logged or stored.
+Live end-to-end verification in Home Assistant is still pending.
