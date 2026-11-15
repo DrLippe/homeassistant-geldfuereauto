@@ -52,6 +52,7 @@ class GeldFuerEautoApi:
             f"{BASE_URL}/api/login",
             json={"email": self._email, "password": self._password},
             headers={
+                "Host": "geld-fuer-eauto.de",
                 "Accept": "application/json, text/plain, */*",
                 "Origin": BASE_URL,
                 "Referer": f"{BASE_URL}/login?redirect=/dashboard/vehicles",
