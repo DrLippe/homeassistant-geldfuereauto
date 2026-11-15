@@ -40,10 +40,15 @@ class GeldFuerEautoApi:
         async with self._session.post(
             f"{BASE_URL}/api/login",
             json={"email": self._email, "password": self._password},
+            headers={
+                "Accept": "application/json, text/plain, */*",
+                "Origin": BASE_URL,
+                "Referer": f"{BASE_URL}/login?redirect=/dashboard/vehicles",
+            },
             timeout=25,
         ) as response:
             if response.status in (400, 401, 403):
-                raise GeldFuerEautoAuthError("Login rejected")
+                raise GeldFuerEautoAuthError(f"Login rejected (HTTP {response.status})")
             response.raise_for_status()
         data = await self._get("/api/getAccountDetails")
         if not isinstance(data, dict) or data.get("email", "").casefold() != self._email.casefold():
