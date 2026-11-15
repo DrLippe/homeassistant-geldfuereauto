@@ -147,10 +147,12 @@ class GeldFuerEautoAccountCoordinator(DataUpdateCoordinator[dict]):
     async def _async_update_data(self) -> dict:
         from .api import GeldFuerEautoAuthError
         try:
-            try:
-                return await self.api.fetch()
-            except GeldFuerEautoAuthError:
-                await self.api.login()
-                return await self.api.fetch()
-        except (ClientError, TimeoutError, ValueError, GeldFuerEautoAuthError) as err:
-            raise UpdateFailed(f"Customer API unavailable: {type(err).__name__}") from err
+            return await self.api.fetch()
+        except GeldFuerEautoAuthError as err:
+            # Do not retry a rejected login. The API client already retries once
+            # when an existing session expires.
+            raise UpdateFailed(f"Customer authentication failed: {err}") from err
+        except (ClientError, TimeoutError, ValueError) as err:
+            raise UpdateFailed(
+                f"Customer API request failed: {type(err).__name__}"
+            ) from err
