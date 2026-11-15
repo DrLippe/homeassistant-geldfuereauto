@@ -1,16 +1,15 @@
 # Geld für eAuto – Home Assistant Integration
 
-Inoffizielle HACS-Integration für [Geld für eAuto](https://geld-fuer-eauto.de/).
+Inoffizielle HACS-Integration für https://geld-fuer-eauto.de/.
 
-## Funktionsumfang (v0.1.0)
+## Funktionsumfang – experimentelle Version 0.2.0
 
-- Öffentliche THG-Standardprämien für die Fahrzeugklassen M1, N1, N2, N3 und M3
-- Garantie- und Expressbetrag in EUR sowie Risikoanteil in Prozent, getrennt nach Quotenjahr
-- Tägliche Aktualisierung und manuelle Aktualisierung über Home Assistant
-- Einrichtung direkt über den Home-Assistant-Config-Flow, ohne Zugangsdaten
-- Deutsche und englische Oberfläche
+Die Integration kann auf zwei Arten eingerichtet werden:
 
-**Wichtig:** Die öffentlich dokumentierte Website enthält Standardpreise, aber keine bestätigte lesende API für das persönliche Kundenkonto. Deshalb zeigt diese erste Version **keine** eigenen Anträge, Fahrzeuge, Auszahlungen oder Kontostände an. Die angezeigten Standardprämien sind unverbindlich. Maßgeblich ist die Anbieterbestätigung.
+- **Ohne Zugangsdaten:** Öffentliche Standardprämien für die Fahrzeugklassen M1, N1, N2, N3, M3 je Quotenjahr. Aktualisierung alle 24 Stunden.
+- **Mit E-Mail und Passwort:** Experimenteller read-only Kundenkontoabruf. Erstellt Sensoren für Anzahl registrierter Fahrzeuge, bezahlte und ausstehende THG-Prämien sowie Prämien, Zahlungsstatus und Auszahlungskennzeichen pro Fahrzeug und Quotenjahr. Aktualisierung alle sechs Stunden.
+
+**Authentifizierung ist noch nicht live bestätigt.** Die HAR-Datei zeigt den Login per `POST /api/login`, aber keine Cookies bzw. Sitzungsheader. Der persönliche Abruf verifiziert daher nach dem Login die Accountdaten; wenn das nicht gelingt, wird eine Aktualisierungsfehlermeldung ausgegeben. Keine Gewähr, dass der Login in der aktuellen Version funktioniert.
 
 ## HACS-Installation
 
@@ -18,17 +17,20 @@ Inoffizielle HACS-Integration für [Geld für eAuto](https://geld-fuer-eauto.de/
 2. `https://github.com/DrLippe/homeassistant-geldfuereauto` hinzufügen, Typ **Integration**.
 3. **Geld für eAuto** installieren und Home Assistant neu starten.
 4. Unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** nach **Geld für eAuto** suchen.
+5. Für persönliche Daten E-Mail und Passwort eingeben; beide Felder leer lassen für öffentliche Standardprämien.
 
-## Datenquelle
+## Datenschutz und Sicherheit
 
-Öffentliche Standardpreistabelle: https://geld-fuer-eauto.de/fuer-ai/preise
+- Zugangsdaten werden ausschließlich in Home Assistants Config Entry abgelegt. Es gibt keine hartcodierten Tokens, Kontodaten oder HAR-Dateien im Repository.
+- E-Mail, IBAN und Anschrift werden nicht als Sensorattribute ausgegeben.
+- Keine schreibenden oder zahlungsbezogenen Aktionen.
+- Da die zugrunde liegenden Webseiten-Endpunkte undokumentiert sind, können sie sich ändern.
+- Für eine Änderung bestehender Zugangsdaten muss die Konfiguration derzeit entfernt und erneut eingerichtet werden.
 
-Die Daten werden einmal täglich eingelesen. Die Implementierung nutzt keine geheimen API-Endpunkte, keine Zugangsdaten und keine Antragserstellung.
+## Entwicklerhinweise
 
-## Entwicklung
-
-Domain: `geld_fuereauto`
-
-Der öffentliche Tarifabruf ist bewusst von einer späteren, separat zu implementierenden Kundenkonto-API getrennt. Eine solche API muss vor Einbindung technisch und rechtlich geprüft werden.
+- Domain: `geld_fuereauto`
+- Kunden-Endpunkte und Schema: [docs/api-endpoints.md](docs/api-endpoints.md)
+- Derzeit werden Fahrzeuge nach erstmaligem Setup als Entitäten angelegt. Werden später weitere Fahrzeuge hinzugefügt, ist eine erneute Einrichtung erforderlich, bis dynamische Discovery ergänzt wird.
 
 Nicht mit der ZusammenStromen GmbH verbunden.
