@@ -71,6 +71,6 @@ class GeldFuerEautoApi:
                 break
             cars.extend(more)
         summary = await self._get(
-            "/api/profile/getPaymentSummary", {"payment_type": "all"}
+            "/api/profile/getPaymentSummary", {"payment_type": "All"}
         )
         return {"account": account, "cars": cars, "payment_summary": summary}
