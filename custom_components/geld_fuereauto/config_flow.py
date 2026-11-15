@@ -3,12 +3,15 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import selector
 
 from .const import DOMAIN, NAME
 
 SCHEMA = vol.Schema({
     vol.Optional("email", default=""): str,
-    vol.Optional("password", default=""): str,
+    vol.Optional("password", default=""): selector.TextSelector(
+        selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+    ),
 })
 
 
