@@ -3,11 +3,18 @@
     "step": {
       "user": {
         "title": "Geld für eAuto",
-        "description": "Set up public THG standard premiums. Personal account access is not supported yet."
+        "description": "Optionally enter email and password for personal vehicles and payouts. Leave both empty for public standard premiums.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
       }
     },
+    "error": {
+      "credentials_incomplete": "Enter both email and password."
+    },
     "abort": {
-      "already_configured": "This integration is already configured."
+      "already_configured": "This account is already configured."
     }
   }
 }
