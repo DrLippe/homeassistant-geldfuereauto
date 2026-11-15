@@ -3,11 +3,18 @@
     "step": {
       "user": {
         "title": "Geld für eAuto",
-        "description": "Öffentliche THG-Standardprämien einrichten. Ein persönlicher Kundenkontoabruf wird derzeit nicht unterstützt."
+        "description": "Optional E-Mail und Passwort für persönliche Fahrzeug- und Auszahlungsdaten eingeben. Ohne Zugangsdaten werden öffentliche Standardprämien eingerichtet.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
       }
     },
+    "error": {
+      "credentials_incomplete": "E-Mail und Passwort müssen gemeinsam angegeben werden."
+    },
     "abort": {
-      "already_configured": "Die Integration ist bereits eingerichtet."
+      "already_configured": "Dieses Konto ist bereits eingerichtet."
     }
   }
 }
